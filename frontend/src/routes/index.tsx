@@ -34,11 +34,11 @@ const SidebarItem = ({ title, date, icon: Icon }: { title: string; date: string;
     gap: "12px",
     alignItems: "center",
   }} className="sidebar-item">
-    <div style={{ width: 32, height: 32, borderRadius: "8px", background: "#1e293b", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <Icon size={16} color="#94a3b8" />
+    <div style={{ width: 32, height: 32, borderRadius: "8px", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Icon size={16} color="#64748b" />
     </div>
     <div style={{ flex: 1, minWidth: 0 }}>
-      <div style={{ fontSize: "13.5px", fontWeight: 500, color: "#e2e8f0", marginBottom: "2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{title}</div>
+      <div style={{ fontSize: "13.5px", fontWeight: 500, color: "#1e293b", marginBottom: "2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{title}</div>
       <div style={{ fontSize: "11px", color: "#64748b" }}>{date}</div>
     </div>
   </div>
@@ -73,19 +73,19 @@ function Message({ msg }: { msg: { role: string; content: string } }) {
           background: "linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)",
           display: "flex", alignItems: "center", justifyContent: "center",
           marginRight: 16, marginTop: 4, fontSize: 20, color: "white",
-          boxShadow: "0 8px 16px rgba(14, 165, 233, 0.3)",
+          boxShadow: "0 8px 16px rgba(14, 165, 233, 0.2)",
         }}>✦</div>
       )}
       <div style={{
         maxWidth: "80%",
-        background: isUser ? "#1e293b" : "transparent",
+        background: isUser ? "#f1f5f9" : "transparent",
         borderRadius: isUser ? "18px 18px 4px 18px" : "0",
         padding: isUser ? "16px 22px" : "8px 0",
-        boxShadow: isUser ? "0 4px 20px rgba(0,0,0,0.2)" : "none",
-        border: isUser ? "1px solid rgba(255,255,255,0.05)" : "none",
+        boxShadow: isUser ? "0 4px 20px rgba(0,0,0,0.05)" : "none",
+        border: isUser ? "1px solid rgba(0,0,0,0.05)" : "none",
       }}>
         <p style={{
-          margin: 0, color: isUser ? "#f8fafc" : "#cbd5e1",
+          margin: 0, color: isUser ? "#1e293b" : "#334155",
           fontSize: 16, lineHeight: 1.7, whiteSpace: "pre-wrap",
           fontFamily: "'Inter', sans-serif",
         }}>{msg.content}</p>
@@ -154,8 +154,8 @@ function Index() {
 
   return (
     <div style={{
-      height: "100vh", background: "#080d14",
-      display: "flex", fontFamily: "'Inter', sans-serif", color: "#f8fafc", overflow: "hidden",
+      height: "100vh", background: "#ffffff",
+      display: "flex", fontFamily: "'Inter', sans-serif", color: "#1e293b", overflow: "hidden",
     }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -164,21 +164,21 @@ function Index() {
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-8px)} }
         textarea::-webkit-scrollbar { width: 4px; }
-        textarea::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
-        .sidebar-item:hover { background: #1e293b; }
-        .suggestion:hover { transform: translateY(-4px); border-color: #0ea5e9 !important; background: rgba(14, 165, 233, 0.05) !important; }
+        textarea::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+        .sidebar-item:hover { background: #f1f5f9; }
+        .suggestion:hover { transform: translateY(-4px); border-color: #0ea5e9 !important; background: rgba(14, 165, 233, 0.05) !important; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .suggestion { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .mode-toggle:hover { background: rgba(255,255,255,0.05); }
+        .mode-toggle:hover { background: rgba(0,0,0,0.02); }
       `}</style>
 
       {/* Sidebar */}
       <aside style={{
         width: 320,
-        borderRight: "1px solid rgba(255,255,255,0.05)",
+        borderRight: "1px solid rgba(0,0,0,0.05)",
         display: "flex",
         flexDirection: "column",
         padding: "32px 20px",
-        background: "#0b1219",
+        background: "#f8fafc",
         flexShrink: 0,
       }}>
         <div style={{ marginBottom: 40 }}>
@@ -218,8 +218,8 @@ function Index() {
         
         <header style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "16px 40px", borderBottom: "1px solid rgba(255,255,255,0.05)",
-          background: "rgba(8,13,20,0.8)", backdropFilter: "blur(20px)",
+          padding: "16px 40px", borderBottom: "1px solid rgba(0,0,0,0.05)",
+          background: "rgba(255,255,255,0.8)", backdropFilter: "blur(20px)",
           position: "sticky", top: 0, zIndex: 100,
         }}>
           <div style={{ display: "flex", alignItems: "center" }}>
@@ -227,21 +227,21 @@ function Index() {
               src={logo} 
               alt="Pulse AI Logo" 
               style={{ 
-                height: 72, 
-                width: "auto", 
-                objectFit: "contain",
-                filter: "drop-shadow(0 0 16px rgba(14, 165, 233, 0.5)) brightness(1.1)",
-              }}
+                  height: 72, 
+                  width: "auto", 
+                  objectFit: "contain",
+                  filter: "drop-shadow(0 0 16px rgba(14, 165, 233, 0.2))",
+                }}
             />
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
             <div style={{ 
-              background: "#111827", 
+              background: "#f1f5f9", 
               padding: "4px", 
               borderRadius: "12px", 
               display: "flex", 
-              border: "1px solid rgba(255,255,255,0.05)" 
+              border: "1px solid rgba(0,0,0,0.05)" 
             }}>
               <button 
                 onClick={() => setMode("scanner")}
@@ -278,7 +278,7 @@ function Index() {
 
         {/* Live Ticker */}
         <div style={{ 
-          background: "rgba(14, 165, 233, 0.03)", 
+          background: "rgba(14, 165, 233, 0.05)", 
           borderBottom: "1px solid rgba(14, 165, 233, 0.1)",
           padding: "10px 0",
           overflow: "hidden",
@@ -301,7 +301,7 @@ function Index() {
               <div style={{ textAlign: "center", marginBottom: 32, animation: "fadeSlideIn 0.8s ease-out" }}>
                 <h1 style={{
                   fontSize: "42px", fontWeight: 800, margin: "0 0 12px",
-                  color: "white", letterSpacing: "-2px",
+                  color: "#1e293b", letterSpacing: "-2px",
                 }}>What's breaking in tech today?</h1>
                 <p style={{ color: "#64748b", fontSize: "16px", margin: "0 0 32px", lineHeight: 1.6 }}>
                   Your AI engine for transforming tech news into viral short-form videos.
@@ -311,10 +311,11 @@ function Index() {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                   {SUGGESTED_PROMPTS.map((s, i) => (
                     <button key={i} className="suggestion" onClick={() => sendMessage(s.text)} style={{
-                      background: "#111827", border: "1px solid rgba(255,255,255,0.05)",
+                      background: "#ffffff", border: "1px solid rgba(0,0,0,0.08)",
                       borderRadius: "20px", padding: "18px 24px", textAlign: "left", cursor: "pointer",
                       display: "flex", alignItems: "flex-start", gap: "16px", 
                       borderLeft: `4px solid ${s.color}`,
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.03)",
                     }}>
                       <div style={{ 
                         width: 48, height: 48, borderRadius: "12px", 
@@ -325,25 +326,13 @@ function Index() {
                       </div>
                       <div>
                         <div style={{ fontSize: "12px", fontWeight: 700, color: s.color, textTransform: "uppercase", marginBottom: "4px", letterSpacing: "1px" }}>{s.category}</div>
-                        <div style={{ fontSize: "15px", lineHeight: 1.5, color: "#e2e8f0", fontWeight: 500 }}>{s.text}</div>
+                        <div style={{ fontSize: "15px", lineHeight: 1.5, color: "#334155", fontWeight: 500 }}>{s.text}</div>
                       </div>
                     </button>
                   ))}
                 </div>
                 
-                {/* Stats Strip */}
-                <div style={{ marginTop: "32px", display: "flex", justifyContent: "center", gap: "40px" }}>
-                  {[
-                    { label: "Scripts Generated", value: "3 Today" },
-                    { label: "Live Sources", value: "124 Scanned" },
-                    { label: "Video Concepts", value: "8 Ready" }
-                  ].map((stat, i) => (
-                    <div key={i} style={{ textAlign: "center" }}>
-                      <div style={{ fontSize: "11px", color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "4px" }}>{stat.label}</div>
-                      <div style={{ fontSize: "16px", fontWeight: 700, color: "#0ea5e9" }}>{stat.value}</div>
-                    </div>
-                  ))}
-                </div>
+
               </div>
             )}
 
@@ -364,14 +353,14 @@ function Index() {
         </main>
 
         <div style={{
-          padding: "16px 40px 24px", background: "rgba(8,13,20,0.9)", backdropFilter: "blur(20px)",
+          padding: "16px 40px 24px", background: "rgba(255,255,255,0.9)", backdropFilter: "blur(20px)",
         }}>
           <div style={{ maxWidth: 840, margin: "0 auto" }}>
             <div className="input-wrap" style={{
-              background: "#111827", border: "1px solid rgba(255,255,255,0.08)",
+              background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)",
               borderRadius: "24px", display: "flex", alignItems: "flex-end",
               padding: "16px 16px 16px 24px", gap: 16, transition: "all 0.3s ease",
-              boxShadow: "0 10px 40px rgba(0,0,0,0.4)",
+              boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
             }}>
               <div style={{ display: "flex", gap: "12px", marginBottom: "8px", color: "#64748b" }}>
                 <button style={{ background: "transparent", border: "none", color: "inherit", cursor: "pointer", padding: 0 }} title="Paste news link">
@@ -390,7 +379,7 @@ function Index() {
                 rows={1}
                 style={{
                   flex: 1, background: "transparent", border: "none", resize: "none",
-                  color: "#f8fafc", fontSize: 16, lineHeight: 1.6, padding: 0,
+                  color: "#1e293b", fontSize: 16, lineHeight: 1.6, padding: 0,
                   fontFamily: "inherit", caretColor: "#0ea5e9", maxHeight: 160,
                 }}
               />
