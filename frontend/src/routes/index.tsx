@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -178,27 +179,28 @@ function Index() {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <img 
-            src="/logo.png" 
+            src={logo} 
             alt="Pulse AI Logo" 
-            style={{ width: 36, height: 36, objectFit: "contain" }}
+            style={{ 
+              height: 48, 
+              width: "auto", 
+              objectFit: "contain",
+              mixBlendMode: "screen",
+              filter: "brightness(1.2)",
+              transition: "all 0.3s ease"
+            }}
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = 'none';
-              (e.target as HTMLImageElement).nextElementSibling!.setAttribute('style', 'display: flex; width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #4fc3f7, #7c4dff, #e040fb); align-items: center; justify-content: center; font-size: 18px; animation: float 4s ease-in-out infinite;');
+              (e.target as HTMLImageElement).nextElementSibling!.setAttribute('style', 'display: flex; width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #4fc3f7, #7c4dff, #e040fb); align-items: center; justify-content: center; font-size: 24px; animation: float 4s ease-in-out infinite;');
             }}
           />
           <div style={{
             display: "none", // Hidden by default, shown if image fails
-            width: 36, height: 36, borderRadius: "50%",
+            width: 48, height: 48, borderRadius: "50%",
             background: "linear-gradient(135deg, #4fc3f7, #7c4dff, #e040fb)",
             alignItems: "center", justifyContent: "center",
-            fontSize: 18, animation: "float 4s ease-in-out infinite",
+            fontSize: 24, animation: "float 4s ease-in-out infinite",
           }}>✦</div>
-          <span style={{
-            fontSize: 22, fontWeight: 600, letterSpacing: "-0.5px",
-            background: "linear-gradient(135deg, #4fc3f7 0%, #7c4dff 50%, #e040fb 100%)",
-            backgroundSize: "200% 200%", WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent", animation: "shimmer 4s ease infinite",
-          }}>Pulse AI</span>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           {["⚡ News Scanner", "🎬 Shorts Mode"].map(label => (
