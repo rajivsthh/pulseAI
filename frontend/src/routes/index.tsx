@@ -138,7 +138,7 @@ function Index() {
     try {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           "x-api-key": "YOUR_API_KEY",
           "anthropic-version": "2023-06-01"
@@ -201,7 +201,7 @@ function Index() {
             <h2 style={{ fontSize: "12px", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "2px", margin: 0 }}>
               My Scripts
             </h2>
-            <button 
+            <button
               onClick={() => setIsSidebarOpen(false)}
               style={{
                 background: "transparent",
@@ -247,7 +247,7 @@ function Index() {
 
       {/* Main Content Area */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>
-        
+
         <header style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "16px 40px", borderBottom: "1px solid rgba(0,0,0,0.05)",
@@ -256,7 +256,7 @@ function Index() {
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
             {!isSidebarOpen && (
-              <button 
+              <button
                 onClick={() => setIsSidebarOpen(true)}
                 style={{
                   background: "#f1f5f9",
@@ -276,28 +276,28 @@ function Index() {
                 <Menu size={20} />
               </button>
             )}
-            <img 
-              src={logo} 
-              alt="Pulse AI Logo" 
-              style={{ 
-                  height: 110, 
-                  width: "auto", 
-                  objectFit: "contain",
-                }}
+            <img
+              src={logo}
+              alt="Pulse AI Logo"
+              style={{
+                height: 110,
+                width: "auto",
+                objectFit: "contain",
+              }}
             />
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-            <div style={{ 
-              background: "#f1f5f9", 
-              padding: "4px", 
-              borderRadius: "12px", 
-              display: "flex", 
-              border: "1px solid rgba(0,0,0,0.05)" 
+            <div style={{
+              background: "#f1f5f9",
+              padding: "4px",
+              borderRadius: "12px",
+              display: "flex",
+              border: "1px solid rgba(0,0,0,0.05)"
             }}>
-              <button 
+              <button
                 onClick={() => setMode("blank")}
-                style={{ 
+                style={{
                   padding: "8px 18px", borderRadius: "8px", fontSize: "13px", fontWeight: 600,
                   background: mode === "blank" ? "#ffffff" : "transparent",
                   boxShadow: mode === "blank" ? "0 2px 8px rgba(0,0,0,0.05)" : "none",
@@ -307,9 +307,9 @@ function Index() {
               >
                 <User size={16} /> Choose your avatar
               </button>
-              <button 
+              <button
                 onClick={() => setMode("scanner")}
-                style={{ 
+                style={{
                   padding: "8px 18px", borderRadius: "8px", fontSize: "13px", fontWeight: 600,
                   background: mode === "scanner" ? "#ffffff" : "transparent",
                   boxShadow: mode === "scanner" ? "0 2px 8px rgba(0,0,0,0.05)" : "none",
@@ -319,9 +319,9 @@ function Index() {
               >
                 <Search size={16} /> News Scanner
               </button>
-              <button 
+              <button
                 onClick={() => setMode("shorts")}
-                style={{ 
+                style={{
                   padding: "8px 18px", borderRadius: "8px", fontSize: "13px", fontWeight: 600,
                   background: mode === "shorts" ? "#ffffff" : "transparent",
                   boxShadow: mode === "shorts" ? "0 2px 8px rgba(0,0,0,0.05)" : "none",
@@ -342,8 +342,8 @@ function Index() {
         </header>
 
         {/* Live Ticker */}
-        <div style={{ 
-          background: "rgba(14, 165, 233, 0.05)", 
+        <div style={{
+          background: "rgba(14, 165, 233, 0.05)",
           borderBottom: "1px solid rgba(14, 165, 233, 0.1)",
           padding: "10px 0",
           overflow: "hidden",
@@ -359,9 +359,9 @@ function Index() {
           </div>
         </div>
 
-        <main style={{ 
-          flex: 1, 
-          overflowY: messages.length === 0 || mode === "blank" ? "hidden" : "auto", 
+        <main style={{
+          flex: 1,
+          overflowY: messages.length === 0 || mode === "blank" ? "hidden" : "auto",
           padding: "20px 0",
           display: "flex",
           flexDirection: "column",
@@ -370,8 +370,8 @@ function Index() {
           <div style={{ maxWidth: 840, margin: "0 auto", padding: "0 40px", width: "100%" }}>
 
             {mode !== "blank" && showSuggestions && messages.length === 0 && (
-              <div style={{ 
-                textAlign: "center", 
+              <div style={{
+                textAlign: "center",
                 animation: "fadeSlideIn 0.8s ease-out",
                 maxWidth: "680px",
                 margin: "0 auto",
@@ -379,7 +379,7 @@ function Index() {
                 alignItems: "center",
                 gap: "24px"
               }}>
-                <button 
+                <button
                   onClick={() => setCurrentVdo((prev) => (prev - 1 + videos.length) % videos.length)}
                   style={{
                     width: 54,
@@ -395,7 +395,7 @@ function Index() {
                     boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
                     transition: "all 0.2s",
                     flexShrink: 0
-                  }} 
+                  }}
                   className="mode-toggle"
                   title="Previous Concept"
                 >
@@ -411,12 +411,12 @@ function Index() {
                     background: "#000",
                     lineHeight: 0
                   }}>
-                    <video 
+                    <video
                       key={currentVdo}
-                      src={videos[currentVdo].src} 
-                      autoPlay 
-                      loop 
-                      muted 
+                      src={videos[currentVdo].src}
+                      autoPlay
+                      loop
+                      muted
                       playsInline
                       style={{
                         width: "100%",
@@ -426,9 +426,9 @@ function Index() {
                       }}
                     />
                   </div>
-                  <div style={{ 
-                    marginTop: 20, 
-                    textAlign: "left", 
+                  <div style={{
+                    marginTop: 20,
+                    textAlign: "left",
                     padding: "0 8px",
                     display: "flex",
                     alignItems: "center",
@@ -441,7 +441,7 @@ function Index() {
                   </div>
                 </div>
 
-                <button 
+                <button
                   onClick={() => setCurrentVdo((prev) => (prev + 1) % videos.length)}
                   style={{
                     width: 54,
@@ -457,7 +457,7 @@ function Index() {
                     boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
                     transition: "all 0.2s",
                     flexShrink: 0
-                  }} 
+                  }}
                   className="mode-toggle"
                   title="Next Concept"
                 >
@@ -480,10 +480,10 @@ function Index() {
             )}
             {mode === "blank" && (
               <div style={{ animation: "fadeSlideIn 0.6s ease-out", maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  style={{ display: "none" }} 
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  style={{ display: "none" }}
                   accept="image/*"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
@@ -496,10 +496,10 @@ function Index() {
                 />
 
                 {!selectedAvatar ? (
-                  <div style={{ 
-                    display: "grid", 
-                    gridTemplateColumns: "repeat(3, 1fr)", 
-                    gap: "24px", 
+                  <div style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: "24px",
                   }}>
                     <div className="suggestion" style={{
                       background: "#ffffff",
@@ -554,27 +554,27 @@ function Index() {
                       }}>
                         <img src={avatarPlaceholder} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="Avatar Preview" />
                       </div>
-                      <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "8px", color: "#1e293b" }}>Select Template</h3>
+                      <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "8px", color: "#1e293b" }}>Select Tom</h3>
                       <p style={{ fontSize: "13px", color: "#64748b", lineHeight: 1.5 }}>Choose from our professionally curated models.</p>
                     </div>
                   </div>
                 ) : (
-                  <div style={{ 
-                    background: "#ffffff", 
-                    padding: "48px", 
-                    borderRadius: "32px", 
+                  <div style={{
+                    background: "#ffffff",
+                    padding: "48px",
+                    borderRadius: "32px",
                     border: "1px solid rgba(0,0,0,0.05)",
                     maxWidth: "500px",
                     margin: "0 auto",
                     boxShadow: "0 20px 40px rgba(0,0,0,0.05)"
                   }}>
                     <div style={{ position: "relative", width: 180, height: 180, margin: "0 auto 32px" }}>
-                      <img 
-                        src={selectedAvatar} 
-                        style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", border: "4px solid white", boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }} 
+                      <img
+                        src={selectedAvatar}
+                        style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", border: "4px solid white", boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
                         alt="Avatar Preview"
                       />
-                      <button 
+                      <button
                         onClick={() => setSelectedAvatar(null)}
                         style={{ position: "absolute", top: 10, right: 10, background: "#ef4444", color: "white", border: "none", borderRadius: "50%", width: 32, height: 32, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                       >
@@ -645,7 +645,7 @@ function Index() {
                 onClick={() => sendMessage()}
                 disabled={!input.trim() || loading}
                 style={{
-                  width: 48, height: 48, borderRadius: "14px", border: "none", 
+                  width: 48, height: 48, borderRadius: "14px", border: "none",
                   cursor: input.trim() && !loading ? "pointer" : "not-allowed",
                   background: input.trim() && !loading ? "#0ea5e9" : "#f1f5f9",
                   display: "flex", alignItems: "center", justifyContent: "center",
