@@ -193,10 +193,27 @@ function Index() {
         transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         overflow: "hidden",
       }}>
-        <div style={{ marginBottom: 40 }}>
-          <h2 style={{ fontSize: "12px", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "2px", marginBottom: 24, paddingLeft: "14px" }}>
-            My Scripts
-          </h2>
+        <div style={{ marginBottom: 40, position: "relative" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, paddingLeft: "14px" }}>
+            <h2 style={{ fontSize: "12px", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "2px", margin: 0 }}>
+              My Scripts
+            </h2>
+            <button 
+              onClick={() => setIsSidebarOpen(false)}
+              style={{
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+                color: "#64748b",
+                padding: "4px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <X size={18} />
+            </button>
+          </div>
           <SidebarItem title="NASA Space Discovery" date="10:45 AM" icon={Zap} />
           <SidebarItem title="Next-Gen Neural Nets" date="Yesterday" icon={Video} />
           <SidebarItem title="Fusion Energy Hook" date="Oct 14" icon={Zap} />
@@ -235,25 +252,27 @@ function Index() {
           position: "sticky", top: 0, zIndex: 100,
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <button 
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              style={{
-                background: "#f1f5f9",
-                border: "none",
-                width: 42,
-                height: 42,
-                borderRadius: "10px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                color: "#64748b",
-                transition: "all 0.2s",
-              }}
-              title={isSidebarOpen ? "Close Sidebar" : "Open Sidebar"}
-            >
-              {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
+            {!isSidebarOpen && (
+              <button 
+                onClick={() => setIsSidebarOpen(true)}
+                style={{
+                  background: "#f1f5f9",
+                  border: "none",
+                  width: 42,
+                  height: 42,
+                  borderRadius: "10px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  color: "#64748b",
+                  transition: "all 0.2s",
+                }}
+                title="Open Sidebar"
+              >
+                <Menu size={20} />
+              </button>
+            )}
             <img 
               src={logo} 
               alt="Pulse AI Logo" 
@@ -340,12 +359,35 @@ function Index() {
               <div style={{ 
                 textAlign: "center", 
                 animation: "fadeSlideIn 0.8s ease-out",
-                maxWidth: "600px",
+                maxWidth: "680px",
                 margin: "0 auto",
                 display: "flex",
                 alignItems: "center",
                 gap: "24px"
               }}>
+                <button 
+                  onClick={() => setCurrentVdo((prev) => (prev - 1 + videos.length) % videos.length)}
+                  style={{
+                    width: 54,
+                    height: 54,
+                    borderRadius: "50%",
+                    background: "#ffffff",
+                    border: "1px solid rgba(0,0,0,0.05)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#64748b",
+                    cursor: "pointer",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                    transition: "all 0.2s",
+                    flexShrink: 0
+                  }} 
+                  className="mode-toggle"
+                  title="Previous Concept"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+
                 <div style={{ flex: 1, pointerEvents: "none", userSelect: "none" }}>
                   <div style={{
                     position: "relative",
