@@ -319,16 +319,16 @@ function Index() {
         </main>
 
         <div style={{
-          padding: "16px 40px 24px", background: "transparent",
+          padding: "16px 40px 48px", background: "transparent",
         }}>
           <div style={{ maxWidth: 840, margin: "0 auto" }}>
             <div className="input-wrap" style={{
               background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)",
-              borderRadius: "24px", display: "flex", alignItems: "flex-end",
+              borderRadius: "24px", display: "flex", alignItems: "center",
               padding: "16px 16px 16px 24px", gap: 16, transition: "all 0.3s ease",
-              boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
             }}>
-              <div style={{ display: "flex", gap: "12px", marginBottom: "8px", color: "#64748b" }}>
+              <div style={{ display: "flex", gap: "12px", color: "#64748b" }}>
                 <button style={{ background: "transparent", border: "none", color: "inherit", cursor: "pointer", padding: 0 }} title="Paste news link">
                   <LinkIcon size={20} />
                 </button>
@@ -347,6 +347,7 @@ function Index() {
                   flex: 1, background: "transparent", border: "none", resize: "none",
                   color: "#334155", fontSize: 16, lineHeight: 1.6, padding: 0,
                   fontFamily: "inherit", caretColor: "#0ea5e9", maxHeight: 160,
+                  outline: "none",
                 }}
               />
               <button
