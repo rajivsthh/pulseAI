@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
-import { Bell, Mic, Link as LinkIcon, Sparkles, Send, History, Video, Zap, Search, Menu, X, ChevronRight, ChevronLeft } from "lucide-react";
+import { Bell, Mic, Link as LinkIcon, Sparkles, Send, History, Video, Zap, Search, Menu, X, ChevronRight, ChevronLeft, Plus, User, Upload } from "lucide-react";
 import logo from "@/assets/logo.jpeg";
 import pulsevdo from "@/assets/pulsevdo.mp4";
 import vdo2 from "@/assets/vdo2.mp4";
+import avatarPlaceholder from "@/assets/image.png";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -101,9 +102,11 @@ function Index() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
-  const [mode, setMode] = useState<"scanner" | "shorts">("shorts");
+  const [mode, setMode] = useState<"scanner" | "shorts" | "blank">("shorts");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentVdo, setCurrentVdo] = useState(0);
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const videos = [
     { src: pulsevdo, prompt: "A cinematic short-form concept generated from latest tech news..." },
@@ -293,17 +296,28 @@ function Index() {
               border: "1px solid rgba(0,0,0,0.05)" 
             }}>
               <button 
+                onClick={() => setMode("blank")}
+                style={{ 
+                  padding: "8px 18px", borderRadius: "8px", fontSize: "13px", fontWeight: 600,
+                  background: mode === "blank" ? "#ffffff" : "transparent",
+                  boxShadow: mode === "blank" ? "0 2px 8px rgba(0,0,0,0.05)" : "none",
+                  border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 8,
+                  color: mode === "blank" ? "#0ea5e9" : "#64748b", transition: "all 0.2s"
+                }}
+              >
+                <User size={16} /> Choose your avatar
+              </button>
+              <button 
                 onClick={() => setMode("scanner")}
                 style={{ 
                   padding: "8px 18px", borderRadius: "8px", fontSize: "13px", fontWeight: 600,
                   background: mode === "scanner" ? "#ffffff" : "transparent",
                   boxShadow: mode === "scanner" ? "0 2px 8px rgba(0,0,0,0.05)" : "none",
-                  color: mode === "scanner" ? "#0ea5e9" : "#64748b",
-                  border: "none", cursor: "pointer", transition: "all 0.2s",
-                  display: "flex", alignItems: "center", gap: "8px"
+                  border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 8,
+                  color: mode === "scanner" ? "#0ea5e9" : "#64748b", transition: "all 0.2s"
                 }}
               >
-                <Search size={14} /> News Scanner
+                <Search size={16} /> News Scanner
               </button>
               <button 
                 onClick={() => setMode("shorts")}
@@ -347,7 +361,7 @@ function Index() {
 
         <main style={{ 
           flex: 1, 
-          overflowY: messages.length === 0 ? "hidden" : "auto", 
+          overflowY: messages.length === 0 || mode === "blank" ? "hidden" : "auto", 
           padding: "20px 0",
           display: "flex",
           flexDirection: "column",
@@ -355,7 +369,7 @@ function Index() {
         }}>
           <div style={{ maxWidth: 840, margin: "0 auto", padding: "0 40px", width: "100%" }}>
 
-            {showSuggestions && messages.length === 0 && (
+            {mode !== "blank" && showSuggestions && messages.length === 0 && (
               <div style={{ 
                 textAlign: "center", 
                 animation: "fadeSlideIn 0.8s ease-out",
@@ -453,8 +467,8 @@ function Index() {
             )}
 
             {/* Messages */}
-            {messages.map((msg, i) => <Message key={i} msg={msg} />)}
-            {loading && (
+            {mode !== "blank" && messages.map((msg, i) => <Message key={i} msg={msg} />)}
+            {mode !== "blank" && loading && (
               <div style={{ display: "flex", alignItems: "flex-start", marginBottom: 28, animation: "fadeSlideIn 0.3s ease-out" }}>
                 <div style={{
                   width: 38, height: 38, borderRadius: "10px", flexShrink: 0,
@@ -462,6 +476,132 @@ function Index() {
                   marginRight: 16, color: "#0ea5e9", fontSize: 20,
                 }}>✦</div>
                 <div style={{ padding: "10px 0" }}><TypingDots /></div>
+              </div>
+            )}
+            {mode === "blank" && (
+              <div style={{ animation: "fadeSlideIn 0.6s ease-out", maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  style={{ display: "none" }} 
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => setSelectedAvatar(reader.result as string);
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+
+                {!selectedAvatar ? (
+                  <div style={{ 
+                    display: "grid", 
+                    gridTemplateColumns: "repeat(3, 1fr)", 
+                    gap: "24px", 
+                  }}>
+                    <div className="suggestion" style={{
+                      background: "#ffffff",
+                      padding: "32px 24px",
+                      borderRadius: "24px",
+                      border: "1px solid rgba(0,0,0,0.05)",
+                      textAlign: "center",
+                      cursor: "pointer",
+                    }}>
+                      <div style={{
+                        width: 54, height: 54, borderRadius: "18px", background: "linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)",
+                        display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", color: "white",
+                        boxShadow: "0 10px 20px rgba(14, 165, 233, 0.2)"
+                      }}>
+                        <Sparkles size={28} />
+                      </div>
+                      <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "8px", color: "#1e293b" }}>Create an AI Avatar</h3>
+                      <p style={{ fontSize: "13px", color: "#64748b", lineHeight: 1.5 }}>Generate a unique AI persona for your engine.</p>
+                    </div>
+
+                    <div className="suggestion" onClick={() => fileInputRef.current?.click()} style={{
+                      background: "#ffffff",
+                      padding: "32px 24px",
+                      borderRadius: "24px",
+                      border: "1px solid rgba(0,0,0,0.05)",
+                      textAlign: "center",
+                      cursor: "pointer",
+                    }}>
+                      <div style={{
+                        width: 54, height: 54, borderRadius: "18px", background: "#f1f5f9",
+                        display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", color: "#64748b",
+                        border: "1px solid rgba(0,0,0,0.05)"
+                      }}>
+                        <Upload size={28} />
+                      </div>
+                      <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "8px", color: "#1e293b" }}>Upload your own</h3>
+                      <p style={{ fontSize: "13px", color: "#64748b", lineHeight: 1.5 }}>Use your existing photo or brand assets.</p>
+                    </div>
+
+                    <div className="suggestion" onClick={() => setSelectedAvatar(avatarPlaceholder)} style={{
+                      background: "#ffffff",
+                      padding: "32px 24px",
+                      borderRadius: "24px",
+                      border: "1px solid rgba(0,0,0,0.05)",
+                      textAlign: "center",
+                      cursor: "pointer",
+                    }}>
+                      <div style={{
+                        width: 54, height: 54, borderRadius: "18px", overflow: "hidden",
+                        margin: "0 auto 20px", border: "1px solid rgba(0,0,0,0.05)",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.05)"
+                      }}>
+                        <img src={avatarPlaceholder} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="Avatar Preview" />
+                      </div>
+                      <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "8px", color: "#1e293b" }}>Select Template</h3>
+                      <p style={{ fontSize: "13px", color: "#64748b", lineHeight: 1.5 }}>Choose from our professionally curated models.</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ 
+                    background: "#ffffff", 
+                    padding: "48px", 
+                    borderRadius: "32px", 
+                    border: "1px solid rgba(0,0,0,0.05)",
+                    maxWidth: "500px",
+                    margin: "0 auto",
+                    boxShadow: "0 20px 40px rgba(0,0,0,0.05)"
+                  }}>
+                    <div style={{ position: "relative", width: 180, height: 180, margin: "0 auto 32px" }}>
+                      <img 
+                        src={selectedAvatar} 
+                        style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", border: "4px solid white", boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }} 
+                        alt="Avatar Preview"
+                      />
+                      <button 
+                        onClick={() => setSelectedAvatar(null)}
+                        style={{ position: "absolute", top: 10, right: 10, background: "#ef4444", color: "white", border: "none", borderRadius: "50%", width: 32, height: 32, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                    <h3 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "12px", color: "#1e293b" }}>Photo Selected</h3>
+                    <p style={{ fontSize: "15px", color: "#64748b", marginBottom: "32px" }}>Ready to transform this photo into your content avatar?</p>
+                    <button style={{
+                      padding: "16px 40px",
+                      background: "linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)",
+                      borderRadius: "14px",
+                      border: "none",
+                      color: "white",
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "12px",
+                      margin: "0 auto",
+                      boxShadow: "0 10px 20px rgba(14, 165, 233, 0.2)"
+                    }}>
+                      <Sparkles size={20} /> Generate Avatar
+                    </button>
+                  </div>
+                )}
               </div>
             )}
             <div ref={bottomRef} />
