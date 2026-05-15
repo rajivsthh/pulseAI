@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
-import { Bell, Mic, Link as LinkIcon, Sparkles, Send, History, Video, Zap, Search, Menu, X } from "lucide-react";
+import { Bell, Mic, Link as LinkIcon, Sparkles, Send, History, Video, Zap, Search, Menu, X, ChevronRight, ChevronLeft } from "lucide-react";
 import logo from "@/assets/logo.jpeg";
+import pulsevdo from "@/assets/pulsevdo.mp4";
+import vdo2 from "@/assets/vdo2.mp4";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -99,8 +101,14 @@ function Index() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
-  const [mode, setMode] = useState<"scanner" | "shorts">("scanner");
+  const [mode, setMode] = useState<"scanner" | "shorts">("shorts");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [currentVdo, setCurrentVdo] = useState(0);
+
+  const videos = [
+    { src: pulsevdo, prompt: "A cinematic short-form concept generated from latest tech news..." },
+    { src: vdo2, prompt: "Next-gen AI verification workflow for viral content creation..." }
+  ];
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -318,11 +326,88 @@ function Index() {
           </div>
         </div>
 
-        <main style={{ flex: 1, overflowY: "auto", padding: "40px 0" }}>
-          <div style={{ maxWidth: 840, margin: "0 auto", padding: "0 40px" }}>
+        <main style={{ 
+          flex: 1, 
+          overflowY: messages.length === 0 ? "hidden" : "auto", 
+          padding: "20px 0",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center"
+        }}>
+          <div style={{ maxWidth: 840, margin: "0 auto", padding: "0 40px", width: "100%" }}>
 
             {showSuggestions && messages.length === 0 && (
-              <div style={{ minHeight: "20vh" }} />
+              <div style={{ 
+                textAlign: "center", 
+                animation: "fadeSlideIn 0.8s ease-out",
+                maxWidth: "600px",
+                margin: "0 auto",
+                display: "flex",
+                alignItems: "center",
+                gap: "24px"
+              }}>
+                <div style={{ flex: 1, pointerEvents: "none", userSelect: "none" }}>
+                  <div style={{
+                    position: "relative",
+                    borderRadius: "24px",
+                    overflow: "hidden",
+                    boxShadow: "0 20px 50px rgba(0,0,0,0.06)",
+                    background: "#000",
+                    lineHeight: 0
+                  }}>
+                    <video 
+                      key={currentVdo}
+                      src={videos[currentVdo].src} 
+                      autoPlay 
+                      loop 
+                      muted 
+                      playsInline
+                      style={{
+                        width: "100%",
+                        maxHeight: "55vh",
+                        objectFit: "cover",
+                        display: "block"
+                      }}
+                    />
+                  </div>
+                  <div style={{ 
+                    marginTop: 20, 
+                    textAlign: "left", 
+                    padding: "0 8px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8
+                  }}>
+                    <span style={{ fontSize: "13px", color: "#64748b", fontWeight: 500 }}>
+                      Prompt: {videos[currentVdo].prompt}
+                    </span>
+                    <div style={{ width: 14, height: 14, borderRadius: "50%", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, cursor: "pointer" }}>+</div>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => setCurrentVdo((prev) => (prev + 1) % videos.length)}
+                  style={{
+                    width: 54,
+                    height: 54,
+                    borderRadius: "50%",
+                    background: "#ffffff",
+                    border: "1px solid rgba(0,0,0,0.05)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#64748b",
+                    cursor: "pointer",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                    transition: "all 0.2s",
+                    flexShrink: 0
+                  }} 
+                  className="mode-toggle"
+                  title="Next Concept"
+                >
+                  <ChevronRight size={24} />
+                </button>
+              </div>
             )}
 
             {/* Messages */}
