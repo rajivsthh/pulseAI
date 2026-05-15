@@ -218,7 +218,7 @@ function Index() {
         
         <header style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "24px 40px", borderBottom: "1px solid rgba(255,255,255,0.05)",
+          padding: "16px 40px", borderBottom: "1px solid rgba(255,255,255,0.05)",
           background: "rgba(8,13,20,0.8)", backdropFilter: "blur(20px)",
           position: "sticky", top: 0, zIndex: 100,
         }}>
