@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
 import { Bell, Mic, Link as LinkIcon, Sparkles, Send, History, Video, Zap, Search } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.jpeg";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -38,7 +38,7 @@ const SidebarItem = ({ title, date, icon: Icon }: { title: string; date: string;
       <Icon size={16} color="#64748b" />
     </div>
     <div style={{ flex: 1, minWidth: 0 }}>
-      <div style={{ fontSize: "13.5px", fontWeight: 500, color: "#1e293b", marginBottom: "2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{title}</div>
+      <div style={{ fontSize: "13.5px", fontWeight: 500, color: "#334155", marginBottom: "2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{title}</div>
       <div style={{ fontSize: "11px", color: "#64748b" }}>{date}</div>
     </div>
   </div>
@@ -85,7 +85,7 @@ function Message({ msg }: { msg: { role: string; content: string } }) {
         border: isUser ? "1px solid rgba(0,0,0,0.05)" : "none",
       }}>
         <p style={{
-          margin: 0, color: isUser ? "#1e293b" : "#334155",
+          margin: 0, color: isUser ? "#334155" : "#475569",
           fontSize: 16, lineHeight: 1.7, whiteSpace: "pre-wrap",
           fontFamily: "'Inter', sans-serif",
         }}>{msg.content}</p>
@@ -155,7 +155,7 @@ function Index() {
   return (
     <div style={{
       height: "100vh", background: "#ffffff",
-      display: "flex", fontFamily: "'Inter', sans-serif", color: "#1e293b", overflow: "hidden",
+      display: "flex", fontFamily: "'Inter', sans-serif", color: "#334155", overflow: "hidden",
     }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -247,7 +247,8 @@ function Index() {
                 onClick={() => setMode("scanner")}
                 style={{ 
                   padding: "8px 18px", borderRadius: "8px", fontSize: "13px", fontWeight: 600,
-                  background: mode === "scanner" ? "#1e293b" : "transparent",
+                  background: mode === "scanner" ? "#ffffff" : "transparent",
+                  boxShadow: mode === "scanner" ? "0 2px 8px rgba(0,0,0,0.05)" : "none",
                   color: mode === "scanner" ? "#0ea5e9" : "#64748b",
                   border: "none", cursor: "pointer", transition: "all 0.2s",
                   display: "flex", alignItems: "center", gap: "8px"
@@ -259,7 +260,8 @@ function Index() {
                 onClick={() => setMode("shorts")}
                 style={{ 
                   padding: "8px 18px", borderRadius: "8px", fontSize: "13px", fontWeight: 600,
-                  background: mode === "shorts" ? "#1e293b" : "transparent",
+                  background: mode === "shorts" ? "#ffffff" : "transparent",
+                  boxShadow: mode === "shorts" ? "0 2px 8px rgba(0,0,0,0.05)" : "none",
                   color: mode === "shorts" ? "#0ea5e9" : "#64748b",
                   border: "none", cursor: "pointer", transition: "all 0.2s",
                   display: "flex", alignItems: "center", gap: "8px"
@@ -298,42 +300,7 @@ function Index() {
           <div style={{ maxWidth: 840, margin: "0 auto", padding: "0 40px" }}>
 
             {showSuggestions && messages.length === 0 && (
-              <div style={{ textAlign: "center", marginBottom: 32, animation: "fadeSlideIn 0.8s ease-out" }}>
-                <h1 style={{
-                  fontSize: "42px", fontWeight: 800, margin: "0 0 12px",
-                  color: "#1e293b", letterSpacing: "-2px",
-                }}>What's breaking in tech today?</h1>
-                <p style={{ color: "#64748b", fontSize: "16px", margin: "0 0 32px", lineHeight: 1.6 }}>
-                  Your AI engine for transforming tech news into viral short-form videos.
-                </p>
-
-                {/* Suggestion Cards */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-                  {SUGGESTED_PROMPTS.map((s, i) => (
-                    <button key={i} className="suggestion" onClick={() => sendMessage(s.text)} style={{
-                      background: "#ffffff", border: "1px solid rgba(0,0,0,0.08)",
-                      borderRadius: "20px", padding: "18px 24px", textAlign: "left", cursor: "pointer",
-                      display: "flex", alignItems: "flex-start", gap: "16px", 
-                      borderLeft: `4px solid ${s.color}`,
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.03)",
-                    }}>
-                      <div style={{ 
-                        width: 48, height: 48, borderRadius: "12px", 
-                        background: `${s.color}15`, display: "flex", 
-                        alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0
-                      }}>
-                        {s.icon}
-                      </div>
-                      <div>
-                        <div style={{ fontSize: "12px", fontWeight: 700, color: s.color, textTransform: "uppercase", marginBottom: "4px", letterSpacing: "1px" }}>{s.category}</div>
-                        <div style={{ fontSize: "15px", lineHeight: 1.5, color: "#334155", fontWeight: 500 }}>{s.text}</div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-                
-
-              </div>
+              <div style={{ minHeight: "20vh" }} />
             )}
 
             {/* Messages */}
@@ -342,7 +309,7 @@ function Index() {
               <div style={{ display: "flex", alignItems: "flex-start", marginBottom: 28, animation: "fadeSlideIn 0.3s ease-out" }}>
                 <div style={{
                   width: 38, height: 38, borderRadius: "10px", flexShrink: 0,
-                  background: "#1e293b", display: "flex", alignItems: "center", justifyContent: "center",
+                  background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center",
                   marginRight: 16, color: "#0ea5e9", fontSize: 20,
                 }}>✦</div>
                 <div style={{ padding: "10px 0" }}><TypingDots /></div>
@@ -379,7 +346,7 @@ function Index() {
                 rows={1}
                 style={{
                   flex: 1, background: "transparent", border: "none", resize: "none",
-                  color: "#1e293b", fontSize: 16, lineHeight: 1.6, padding: 0,
+                  color: "#334155", fontSize: 16, lineHeight: 1.6, padding: 0,
                   fontFamily: "inherit", caretColor: "#0ea5e9", maxHeight: 160,
                 }}
               />
@@ -390,7 +357,7 @@ function Index() {
                 style={{
                   width: 48, height: 48, borderRadius: "14px", border: "none", 
                   cursor: input.trim() && !loading ? "pointer" : "not-allowed",
-                  background: input.trim() && !loading ? "#0ea5e9" : "#1e293b",
+                  background: input.trim() && !loading ? "#0ea5e9" : "#f1f5f9",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: 22, transition: "all 0.3s ease", flexShrink: 0,
                   color: input.trim() && !loading ? "white" : "#475569",
