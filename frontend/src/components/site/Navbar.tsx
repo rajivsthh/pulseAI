@@ -48,8 +48,12 @@ export function Navbar() {
           >
             <Command className="h-3 w-3" /> Ask <kbd className="font-mono text-[10px] opacity-70">⌘K</kbd>
           </a>
-          <a href="#cta" className="inline-flex h-8 items-center px-3.5 rounded-full bg-foreground text-background text-xs font-medium hover:bg-foreground/90 transition">
-            Get early access
+          <a
+            href="#cta"
+            className="inline-flex h-10 items-center px-4 rounded-full bg-gradient-to-r from-iris to-fuchsia-600 text-white text-sm font-semibold shadow-lg ring-2 ring-iris/20 hover:scale-105 transform transition"
+            aria-label="Get early access"
+          >
+            Get Early Access
           </a>
         </div>
       </nav>
