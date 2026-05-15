@@ -154,7 +154,7 @@ function Index() {
 
   return (
     <div style={{
-      height: "100vh", background: "#ffffff",
+      height: "100vh", background: "#f8fafc",
       display: "flex", fontFamily: "'Inter', sans-serif", color: "#334155", overflow: "hidden",
     }}>
       <style>{`
@@ -178,7 +178,7 @@ function Index() {
         display: "flex",
         flexDirection: "column",
         padding: "32px 20px",
-        background: "#f8fafc",
+        background: "#ffffff",
         flexShrink: 0,
       }}>
         <div style={{ marginBottom: 40 }}>
@@ -219,7 +219,7 @@ function Index() {
         <header style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "16px 40px", borderBottom: "1px solid rgba(0,0,0,0.05)",
-          background: "rgba(255,255,255,0.8)", backdropFilter: "blur(20px)",
+          background: "#ffffff",
           position: "sticky", top: 0, zIndex: 100,
         }}>
           <div style={{ display: "flex", alignItems: "center" }}>
@@ -227,10 +227,9 @@ function Index() {
               src={logo} 
               alt="Pulse AI Logo" 
               style={{ 
-                  height: 72, 
+                  height: 110, 
                   width: "auto", 
                   objectFit: "contain",
-                  filter: "drop-shadow(0 0 16px rgba(14, 165, 233, 0.2))",
                 }}
             />
           </div>
@@ -320,7 +319,7 @@ function Index() {
         </main>
 
         <div style={{
-          padding: "16px 40px 24px", background: "rgba(255,255,255,0.9)", backdropFilter: "blur(20px)",
+          padding: "16px 40px 24px", background: "transparent",
         }}>
           <div style={{ maxWidth: 840, margin: "0 auto" }}>
             <div className="input-wrap" style={{
