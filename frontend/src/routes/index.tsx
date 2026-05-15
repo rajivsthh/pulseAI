@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
-import { Bell, Mic, Link as LinkIcon, Sparkles, Send, History, Video, Zap, Search } from "lucide-react";
+import { Bell, Mic, Link as LinkIcon, Sparkles, Send, History, Video, Zap, Search, Menu, X } from "lucide-react";
 import logo from "@/assets/logo.jpeg";
 
 export const Route = createFileRoute("/")({
@@ -100,6 +100,7 @@ function Index() {
   const [loading, setLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [mode, setMode] = useState<"scanner" | "shorts">("scanner");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -173,13 +174,16 @@ function Index() {
 
       {/* Sidebar */}
       <aside style={{
-        width: 320,
-        borderRight: "1px solid rgba(0,0,0,0.05)",
+        width: isSidebarOpen ? 320 : 0,
+        opacity: isSidebarOpen ? 1 : 0,
+        borderRight: isSidebarOpen ? "1px solid rgba(0,0,0,0.05)" : "none",
         display: "flex",
         flexDirection: "column",
-        padding: "32px 20px",
+        padding: isSidebarOpen ? "32px 20px" : "32px 0",
         background: "#ffffff",
         flexShrink: 0,
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        overflow: "hidden",
       }}>
         <div style={{ marginBottom: 40 }}>
           <h2 style={{ fontSize: "12px", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "2px", marginBottom: 24, paddingLeft: "14px" }}>
@@ -222,7 +226,26 @@ function Index() {
           background: "#ffffff",
           position: "sticky", top: 0, zIndex: 100,
         }}>
-          <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+            <button 
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              style={{
+                background: "#f1f5f9",
+                border: "none",
+                width: 42,
+                height: 42,
+                borderRadius: "10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                color: "#64748b",
+                transition: "all 0.2s",
+              }}
+              title={isSidebarOpen ? "Close Sidebar" : "Open Sidebar"}
+            >
+              {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
             <img 
               src={logo} 
               alt="Pulse AI Logo" 
