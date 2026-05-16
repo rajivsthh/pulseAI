@@ -21,7 +21,9 @@ export function Navbar() {
     <header className="fixed top-0 inset-x-0 z-50 flex justify-center px-4 pt-4">
       <nav
         className={`flex items-center gap-2 sm:gap-6 px-3 sm:px-4 h-12 rounded-full transition-all duration-500 ${
-          scrolled ? "glass-strong shadow-[0_8px_30px_rgba(0,0,0,0.3)] w-full max-w-3xl" : "glass w-full max-w-2xl"
+          scrolled
+            ? "glass-strong shadow-[0_8px_30px_rgba(0,0,0,0.3)] w-full max-w-3xl"
+            : "w-full max-w-2xl bg-white/95 border border-white/6"
         }`}
       >
         <a href="#top" className="flex items-center gap-2 pl-2 group">
