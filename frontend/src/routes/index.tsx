@@ -61,8 +61,10 @@ function TypingDots() {
   );
 }
 
-function Message({ msg }: { msg: { role: string; content: string } }) {
+function Message({ msg }: { msg: { role: string; content: string | { type: "image" | "video" | "pdf"; src: string; name?: string } } }) {
   const isUser = msg.role === "user";
+  const content = msg.content;
+  const isFile = typeof content !== "string";
   return (
     <div style={{
       display: "flex",
@@ -87,18 +89,29 @@ function Message({ msg }: { msg: { role: string; content: string } }) {
         boxShadow: isUser ? "0 4px 20px rgba(0,0,0,0.05)" : "none",
         border: isUser ? "1px solid rgba(0,0,0,0.05)" : "none",
       }}>
-        <p style={{
-          margin: 0, color: isUser ? "#334155" : "#475569",
-          fontSize: 16, lineHeight: 1.7, whiteSpace: "pre-wrap",
-          fontFamily: "'Inter', sans-serif",
-        }}>{msg.content}</p>
+        {typeof content === 'string' ? (
+          <p style={{
+            margin: 0, color: isUser ? "#334155" : "#475569",
+            fontSize: 16, lineHeight: 1.7, whiteSpace: "pre-wrap",
+            fontFamily: "'Inter', sans-serif",
+          }}>{content}</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {content.type === 'image' && <img src={content.src} alt={content.name || 'image'} style={{ maxWidth: '100%', borderRadius: 12 }} />}
+            {content.type === 'video' && <video src={content.src} controls style={{ maxWidth: '100%', borderRadius: 12 }} />}
+            {content.type === 'pdf' && (
+              <a href={content.src} download={content.name} style={{ color: '#0ea5e9', textDecoration: 'underline' }}>{content.name || 'Download PDF'}</a>
+            )}
+            {content.name && <div style={{ fontSize: 12, color: '#64748b' }}>{content.name}</div>}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
 function Index() {
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
+  const [messages, setMessages] = useState<Array<{ role: string; content: string | { type: "image" | "video" | "pdf"; src: string; name?: string } }>>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
@@ -107,6 +120,7 @@ function Index() {
   const [currentVdo, setCurrentVdo] = useState(0);
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const attachmentInputRef = useRef<HTMLInputElement>(null);
 
   const videos = [
     { src: pulsevdo, prompt: "A cinematic short-form concept generated from latest tech news..." },
@@ -143,11 +157,11 @@ function Index() {
           "x-api-key": "YOUR_API_KEY",
           "anthropic-version": "2023-06-01"
         },
-        body: JSON.stringify({
+            body: JSON.stringify({
           model: "claude-3-5-sonnet-20240620",
           max_tokens: 1000,
           system: PULSE_AI_PROMPT,
-          messages: newMessages.map(m => ({ role: m.role, content: m.content })),
+              messages: newMessages.map(m => ({ role: m.role, content: typeof m.content === 'string' ? m.content : `[file:${(m.content as any).name || 'attachment'}]` })),
         }),
       });
       const data = await res.json();
@@ -604,6 +618,30 @@ function Index() {
                 )}
               </div>
             )}
+
+            {/* Hidden attachment input for chat uploads */}
+            <input
+              type="file"
+              ref={attachmentInputRef}
+              style={{ display: "none" }}
+              accept="image/*,video/*,application/pdf"
+              multiple
+              onChange={(e) => {
+                const files = Array.from(e.target.files || []);
+                if (files.length === 0) return;
+                files.forEach((file) => {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    const result = reader.result as string;
+                    const type = file.type.startsWith("image/") ? "image" : file.type.startsWith("video/") ? "video" : file.type === "application/pdf" ? "pdf" : "pdf";
+                    setMessages(prev => [...prev, { role: "user", content: { type, src: result, name: file.name } }]);
+                  };
+                  reader.readAsDataURL(file);
+                });
+                // clear value so same file can be reselected
+                if (attachmentInputRef.current) attachmentInputRef.current.value = "";
+              }}
+            />
             <div ref={bottomRef} />
           </div>
         </main>
@@ -619,6 +657,9 @@ function Index() {
               boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
             }}>
               <div style={{ display: "flex", gap: "12px", color: "#64748b" }}>
+                <button onClick={() => attachmentInputRef.current?.click()} style={{ background: "transparent", border: "none", color: "inherit", cursor: "pointer", padding: 0 }} title="Upload media">
+                  <Plus size={18} />
+                </button>
                 <button style={{ background: "transparent", border: "none", color: "inherit", cursor: "pointer", padding: 0 }} title="Paste news link">
                   <LinkIcon size={20} />
                 </button>
