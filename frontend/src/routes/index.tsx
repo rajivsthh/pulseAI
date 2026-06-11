@@ -2,23 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
 import { Bell, Mic, Link as LinkIcon, Sparkles, Send, History, Video, Zap, Search, Menu, X, ChevronRight, Plus, User, Upload, Play, Pause } from "lucide-react";
 import logo from "@/assets/logo.jpeg";
-import pulsevdo from "@/assets/pulsevdo.mp4";
-import vdo2 from "@/assets/vdo2.mp4";
+import hiVdo from "@/assets/hi.mp4";
 import test2Audio from "@/assets/test2.mp3";
 import avatarPlaceholder from "@/assets/image.png";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
-
-const PULSE_AI_PROMPT = `You are Pulse AI, an advanced 'News-to-Shorts' content engine. You specialize in transforming complex global technology updates into short, engaging educational concepts and scripts optimized for TikTok, Instagram Reels, and YouTube Shorts.
-
-When responding, you should:
-- Explain tech discoveries with clarity: reference discovery sources, verification steps, and real-world impact.
-- Suggest video concepts: outline how a specific piece of news can be distilled into a 60-second engaging script.
-- Address verification: emphasize accuracy and responsible AI practices in content distillation.
-- Localize the impact: explain why this news matters to students, self-learners, and innovators.
-- Blend scientific accuracy with digital storytelling brilliance.`;
 
 const SUGGESTED_PROMPTS = [
   { icon: "🛸", category: "Space", text: "Draft a 60-second script about NASA's newest space discovery", color: "#0ea5e9" },
@@ -148,12 +138,12 @@ function Index() {
 
   const videos = [
     {
-      src: vdo2,
+      src: hiVdo,
       prompt: "Next-gen AI verification workflow for viral content creation...",
       subtitle: "Microsoft has released its June security updates, addressing around 200 vulnerabilities across Windows and related products. Among the fixes are dozens of critical flaws and multiple publicly disclosed zero-day vulnerabilities. Security experts recommend updating systems as soon as possible, especially for organizations managing large numbers of Windows devices. The message is simple: if your systems aren't patched, you're giving attackers an opportunity.",
     },
     {
-      src: pulsevdo,
+      src: hiVdo,
       prompt: "A cinematic short-form concept generated from latest tech news...",
       subtitle: "Microsoft has released its June security updates, addressing around 200 vulnerabilities across Windows and related products. Among the fixes are dozens of critical flaws and multiple publicly disclosed zero-day vulnerabilities. Security experts recommend updating systems as soon as possible, especially for organizations managing large numbers of Windows devices. The message is simple: if your systems aren't patched, you're giving attackers an opportunity.",
     }
