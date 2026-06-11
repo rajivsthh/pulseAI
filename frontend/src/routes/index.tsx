@@ -128,6 +128,8 @@ function Index() {
   const [currentVdo, setCurrentVdo] = useState(0);
   const [videoDirection, setVideoDirection] = useState<"next">("next");
   const [hasPrompt, setHasPrompt] = useState(false);
+  const [videoVisible, setVideoVisible] = useState(false);
+  const [videoCountdown, setVideoCountdown] = useState(0);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [subtitleChunkIndex, setSubtitleChunkIndex] = useState(0);
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
@@ -135,6 +137,8 @@ function Index() {
   const attachmentInputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const videoDelayTimeoutRef = useRef<number | null>(null);
+  const videoDelayIntervalRef = useRef<number | null>(null);
 
   const videos = [
     {
@@ -196,7 +200,7 @@ function Index() {
 
     const interval = window.setInterval(() => {
       setSubtitleChunkIndex((prev) => (prev + 1) % subtitleChunks.length);
-    }, 1500);
+    }, 1400);
 
     return () => window.clearInterval(interval);
   }, [hasPrompt, isAudioPlaying, currentVdo]);
@@ -212,7 +216,8 @@ function Index() {
     setInput("");
     setHasPrompt(true);
     setShowSuggestions(false);
-    setIsAudioPlaying(true);
+    // hide video and start delay before showing it
+    setVideoVisible(false);
     if (textareaRef.current) textareaRef.current.style.height = "auto";
 
     const newMessages = [...messages, { role: "user", content: userText }];
@@ -223,6 +228,29 @@ function Index() {
       await new Promise((resolve) => setTimeout(resolve, 450));
       const reply = `Here is a short video concept for: "${userText}". I would turn this into a fast hook, a clear middle, and a strong ending for a 15 to 30 second clip.`;
       setMessages(prev => [...prev, { role: "assistant", content: reply }]);
+      // start a 12 second delay (configurable) before showing the video
+      const delayMs = 12000; // 12 seconds (user suggested 10-15s)
+      // clear any existing timers
+      if (videoDelayTimeoutRef.current) window.clearTimeout(videoDelayTimeoutRef.current);
+      if (videoDelayIntervalRef.current) window.clearInterval(videoDelayIntervalRef.current);
+      setVideoCountdown(Math.ceil(delayMs / 1000));
+      videoDelayIntervalRef.current = window.setInterval(() => {
+        setVideoCountdown((prev) => {
+          if (prev <= 1) {
+            if (videoDelayIntervalRef.current) {
+              window.clearInterval(videoDelayIntervalRef.current);
+              videoDelayIntervalRef.current = null;
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      videoDelayTimeoutRef.current = window.setTimeout(() => {
+        setVideoVisible(true);
+        setIsAudioPlaying(true);
+        if (videoDelayTimeoutRef.current) { window.clearTimeout(videoDelayTimeoutRef.current); videoDelayTimeoutRef.current = null; }
+      }, delayMs) as unknown as number;
     } catch (e) {
       setMessages(prev => [...prev, { role: "assistant", content: "⚠️ Connection error. Please try again." }]);
     } finally {
@@ -443,110 +471,133 @@ function Index() {
           <div style={{ maxWidth: 840, margin: "0 auto", padding: "0 40px", width: "100%" }}>
 
             {mode !== "blank" && hasPrompt && (
-              <div style={{
-                animation: "fadeSlideIn 0.8s ease-out",
-                maxWidth: "680px",
-                margin: "0 auto",
-                userSelect: "none",
-                position: "relative"
-              }}>
+              videoVisible ? (
                 <div style={{
+                  animation: "fadeSlideIn 0.8s ease-out",
+                  maxWidth: "680px",
+                  margin: "0 auto",
+                  userSelect: "none",
+                  position: "relative"
+                }}>
+                  <div style={{
+                    position: "relative",
+                    borderRadius: "24px",
+                    overflow: "hidden",
+                    boxShadow: "0 20px 50px rgba(0,0,0,0.06)",
+                    background: "#000",
+                    lineHeight: 0,
+                    animation: videoDirection === "next" ? "slideFromRight 0.35s ease" : "slideFromLeft 0.35s ease"
+                  }}>
+                    <video
+                      ref={videoRef}
+                      key={currentVdo}
+                      src={videos[currentVdo].src}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      style={{
+                        width: "100%",
+                        maxHeight: "55vh",
+                        objectFit: "cover",
+                        display: "block"
+                      }}
+                    />
+                    <div style={{
+                      position: "absolute",
+                      left: 14,
+                      right: 14,
+                      bottom: 16,
+                      padding: "12px 14px",
+                      borderRadius: 14,
+                      background: "linear-gradient(180deg, rgba(15,23,42,0.12), rgba(15,23,42,0.78))",
+                      color: "white",
+                      textShadow: "0 2px 10px rgba(0,0,0,0.35)",
+                      pointerEvents: "none",
+                      textAlign: "center",
+                    }}>
+                      <div style={{ fontSize: 15, lineHeight: 1.55, fontWeight: 700, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                        {subtitleChunks[subtitleChunkIndex]}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setIsAudioPlaying((prev) => !prev)}
+                      style={{
+                        position: "absolute",
+                        left: 16,
+                        bottom: 16,
+                        width: 42,
+                        height: 42,
+                        borderRadius: "50%",
+                        border: "none",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "rgba(15, 23, 42, 0.82)",
+                        color: "white",
+                        boxShadow: "0 12px 24px rgba(0,0,0,0.22)",
+                      }}
+                      aria-label={isAudioPlaying ? "Pause audio" : "Play audio"}
+                      title={isAudioPlaying ? "Pause audio" : "Play audio"}
+                    >
+                      {isAudioPlaying ? <Pause size={18} /> : <Play size={18} style={{ marginLeft: 2 }} />}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setVideoDirection("next");
+                        setCurrentVdo((prev) => (prev + 1) % videos.length);
+                        setIsAudioPlaying(true);
+                      }}
+                      style={{
+                        position: "absolute",
+                        right: 16,
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        width: 50,
+                        height: 50,
+                        borderRadius: "50%",
+                        border: "none",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "rgba(15, 23, 42, 0.88)",
+                        color: "white",
+                        boxShadow: "0 12px 24px rgba(0,0,0,0.22)",
+                      }}
+                      aria-label="Next video"
+                      title="Next video"
+                    >
+                      <ChevronRight size={20} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{
+                  animation: "fadeSlideIn 0.8s ease-out",
+                  maxWidth: "680px",
+                  margin: "0 auto",
+                  userSelect: "none",
                   position: "relative",
                   borderRadius: "24px",
                   overflow: "hidden",
                   boxShadow: "0 20px 50px rgba(0,0,0,0.06)",
                   background: "#000",
-                  lineHeight: 0,
-                  animation: videoDirection === "next" ? "slideFromRight 0.35s ease" : "slideFromLeft 0.35s ease"
+                  minHeight: "220px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "white",
+                  flexDirection: "column",
+                  gap: 12,
+                  padding: 24
                 }}>
-                  <video
-                    ref={videoRef}
-                    key={currentVdo}
-                    src={videos[currentVdo].src}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    style={{
-                      width: "100%",
-                      maxHeight: "55vh",
-                      objectFit: "cover",
-                      display: "block"
-                    }}
-                  />
-                  <div style={{
-                    position: "absolute",
-                    left: 14,
-                    right: 14,
-                    bottom: 16,
-                    padding: "12px 14px",
-                    borderRadius: 14,
-                    background: "linear-gradient(180deg, rgba(15,23,42,0.12), rgba(15,23,42,0.78))",
-                    color: "white",
-                    textShadow: "0 2px 10px rgba(0,0,0,0.35)",
-                    pointerEvents: "none",
-                    textAlign: "center",
-                  }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.8, marginBottom: 4 }}>
-                      Subtitle
-                    </div>
-                    <div style={{ fontSize: 15, lineHeight: 1.55, fontWeight: 700, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-                      {subtitleChunks[subtitleChunkIndex]}
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setIsAudioPlaying((prev) => !prev)}
-                    style={{
-                      position: "absolute",
-                      left: 16,
-                      bottom: 16,
-                      width: 42,
-                      height: 42,
-                      borderRadius: "50%",
-                      border: "none",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      background: "rgba(15, 23, 42, 0.82)",
-                      color: "white",
-                      boxShadow: "0 12px 24px rgba(0,0,0,0.22)",
-                    }}
-                    aria-label={isAudioPlaying ? "Pause audio" : "Play audio"}
-                    title={isAudioPlaying ? "Pause audio" : "Play audio"}
-                  >
-                    {isAudioPlaying ? <Pause size={18} /> : <Play size={18} style={{ marginLeft: 2 }} />}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setVideoDirection("next");
-                      setCurrentVdo((prev) => (prev + 1) % videos.length);
-                      setIsAudioPlaying(true);
-                    }}
-                    style={{
-                      position: "absolute",
-                      right: 16,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      width: 50,
-                      height: 50,
-                      borderRadius: "50%",
-                      border: "none",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      background: "rgba(15, 23, 42, 0.88)",
-                      color: "white",
-                      boxShadow: "0 12px 24px rgba(0,0,0,0.22)",
-                    }}
-                    aria-label="Next video"
-                    title="Next video"
-                  >
-                    <ChevronRight size={20} />
-                  </button>
+                  <div style={{ fontSize: 18, fontWeight: 700 }}>Preparing video...</div>
+                  <div style={{ fontSize: 13, color: "#cbd5e1" }}>This will appear in {videoCountdown} second{videoCountdown === 1 ? "" : "s"}.</div>
+                  <div style={{ marginTop: 8 }}><TypingDots /></div>
                 </div>
-              </div>
+              )
             )}
 
             {/* Messages */}
