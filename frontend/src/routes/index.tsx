@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
-import { Bell, Mic, Link as LinkIcon, Sparkles, Send, History, Video, Zap, Search, Menu, X, ChevronRight, ChevronLeft, Plus, User, Upload } from "lucide-react";
+import { Bell, Mic, Link as LinkIcon, Sparkles, Send, History, Video, Zap, Search, Menu, X, ChevronRight, Plus, User, Upload, Play, Pause } from "lucide-react";
 import logo from "@/assets/logo.jpeg";
 import pulsevdo from "@/assets/pulsevdo.mp4";
 import vdo2 from "@/assets/vdo2.mp4";
+import test1Audio from "@/assets/test1.mp3";
 import avatarPlaceholder from "@/assets/image.png";
 
 export const Route = createFileRoute("/")({
@@ -59,6 +60,23 @@ function TypingDots() {
       ))}
     </div>
   );
+}
+
+function chunkSubtitle(text: string) {
+  const words = text.split(/\s+/).filter(Boolean);
+  const pattern = [3, 2];
+  const chunks: string[] = [];
+  let index = 0;
+  let patternIndex = 0;
+
+  while (index < words.length) {
+    const size = pattern[patternIndex % pattern.length];
+    chunks.push(words.slice(index, index + size).join(" "));
+    index += size;
+    patternIndex += 1;
+  }
+
+  return chunks;
 }
 
 function Message({ msg }: { msg: { role: string; content: string | { type: "image" | "video" | "pdf"; src: string; name?: string } } }) {
@@ -118,20 +136,80 @@ function Index() {
   const [mode, setMode] = useState<"scanner" | "shorts" | "blank">("shorts");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentVdo, setCurrentVdo] = useState(0);
+  const [videoDirection, setVideoDirection] = useState<"next">("next");
+  const [hasPrompt, setHasPrompt] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [subtitleChunkIndex, setSubtitleChunkIndex] = useState(0);
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const videos = [
-    { src: pulsevdo, prompt: "A cinematic short-form concept generated from latest tech news..." },
-    { src: vdo2, prompt: "Next-gen AI verification workflow for viral content creation..." }
+    {
+      src: vdo2,
+      prompt: "Next-gen AI verification workflow for viral content creation...",
+      subtitle: "Microsoft has released its June security updates, addressing around 200 vulnerabilities across Windows and related products. Among the fixes are dozens of critical flaws and multiple publicly disclosed zero-day vulnerabilities. Security experts recommend updating systems as soon as possible, especially for organizations managing large numbers of Windows devices. The message is simple: if your systems aren't patched, you're giving attackers an opportunity.",
+    },
+    {
+      src: pulsevdo,
+      prompt: "A cinematic short-form concept generated from latest tech news...",
+      subtitle: "Microsoft has released its June security updates, addressing around 200 vulnerabilities across Windows and related products. Among the fixes are dozens of critical flaws and multiple publicly disclosed zero-day vulnerabilities. Security experts recommend updating systems as soon as possible, especially for organizations managing large numbers of Windows devices. The message is simple: if your systems aren't patched, you're giving attackers an opportunity.",
+    }
   ];
+  const subtitleChunks = chunkSubtitle(videos[currentVdo].subtitle);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  useEffect(() => {
+    if (!audioRef.current) return;
+    audioRef.current.volume = 0.75;
+  }, []);
+
+  useEffect(() => {
+    if (!audioRef.current || !videoRef.current || !isAudioPlaying) return;
+    audioRef.current.currentTime = 0;
+    videoRef.current.currentTime = 0;
+    setSubtitleChunkIndex(0);
+    Promise.all([
+      audioRef.current.play(),
+      videoRef.current.play(),
+    ]).catch(() => setIsAudioPlaying(false));
+  }, [currentVdo]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    const video = videoRef.current;
+    if (!audio || !video) return;
+
+    if (isAudioPlaying) {
+      Promise.all([
+        audio.play(),
+        video.play(),
+      ]).catch(() => setIsAudioPlaying(false));
+    } else {
+      audio.pause();
+      video.pause();
+    }
+  }, [isAudioPlaying]);
+
+  useEffect(() => {
+    if (!hasPrompt) return;
+    setSubtitleChunkIndex(0);
+
+    if (!isAudioPlaying || subtitleChunks.length <= 1) return;
+
+    const interval = window.setInterval(() => {
+      setSubtitleChunkIndex((prev) => (prev + 1) % subtitleChunks.length);
+    }, 1200);
+
+    return () => window.clearInterval(interval);
+  }, [hasPrompt, isAudioPlaying, currentVdo]);
 
   const autoResize = () => {
     const el = textareaRef.current;
@@ -142,7 +220,9 @@ function Index() {
     const userText = (text || input).trim();
     if (!userText || loading) return;
     setInput("");
+    setHasPrompt(true);
     setShowSuggestions(false);
+    setIsAudioPlaying(true);
     if (textareaRef.current) textareaRef.current.style.height = "auto";
 
     const newMessages = [...messages, { role: "user", content: userText }];
@@ -150,22 +230,8 @@ function Index() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": "YOUR_API_KEY",
-          "anthropic-version": "2023-06-01"
-        },
-            body: JSON.stringify({
-          model: "claude-3-5-sonnet-20240620",
-          max_tokens: 1000,
-          system: PULSE_AI_PROMPT,
-              messages: newMessages.map(m => ({ role: m.role, content: typeof m.content === 'string' ? m.content : `[file:${(m.content as any).name || 'attachment'}]` })),
-        }),
-      });
-      const data = await res.json();
-      const reply = data.content?.map((b: any) => b.text || "").join("") || "No response.";
+      await new Promise((resolve) => setTimeout(resolve, 450));
+      const reply = `Here is a short video concept for: "${userText}". I would turn this into a fast hook, a clear middle, and a strong ending for a 15 to 30 second clip.`;
       setMessages(prev => [...prev, { role: "assistant", content: reply }]);
     } catch (e) {
       setMessages(prev => [...prev, { role: "assistant", content: "⚠️ Connection error. Please try again." }]);
@@ -183,9 +249,12 @@ function Index() {
       height: "100vh", background: "#f8fafc",
       display: "flex", fontFamily: "'Inter', sans-serif", color: "#334155", overflow: "hidden",
     }}>
+      <audio ref={audioRef} src={test1Audio} loop preload="auto" />
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
         @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideFromRight { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideFromLeft { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes float { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-8px)} }
@@ -383,100 +452,110 @@ function Index() {
         }}>
           <div style={{ maxWidth: 840, margin: "0 auto", padding: "0 40px", width: "100%" }}>
 
-            {mode !== "blank" && showSuggestions && messages.length === 0 && (
+            {mode !== "blank" && hasPrompt && (
               <div style={{
-                textAlign: "center",
                 animation: "fadeSlideIn 0.8s ease-out",
                 maxWidth: "680px",
                 margin: "0 auto",
-                display: "flex",
-                alignItems: "center",
-                gap: "24px"
+                userSelect: "none",
+                position: "relative"
               }}>
-                <button
-                  onClick={() => setCurrentVdo((prev) => (prev - 1 + videos.length) % videos.length)}
-                  style={{
-                    width: 54,
-                    height: 54,
-                    borderRadius: "50%",
-                    background: "#ffffff",
-                    border: "1px solid rgba(0,0,0,0.05)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#64748b",
-                    cursor: "pointer",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                    transition: "all 0.2s",
-                    flexShrink: 0
-                  }}
-                  className="mode-toggle"
-                  title="Previous Concept"
-                >
-                  <ChevronLeft size={24} />
-                </button>
-
-                <div style={{ flex: 1, pointerEvents: "none", userSelect: "none" }}>
+                <div style={{
+                  position: "relative",
+                  borderRadius: "24px",
+                  overflow: "hidden",
+                  boxShadow: "0 20px 50px rgba(0,0,0,0.06)",
+                  background: "#000",
+                  lineHeight: 0,
+                  animation: videoDirection === "next" ? "slideFromRight 0.35s ease" : "slideFromLeft 0.35s ease"
+                }}>
+                  <video
+                    ref={videoRef}
+                    key={currentVdo}
+                    src={videos[currentVdo].src}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    style={{
+                      width: "100%",
+                      maxHeight: "55vh",
+                      objectFit: "cover",
+                      display: "block"
+                    }}
+                  />
                   <div style={{
-                    position: "relative",
-                    borderRadius: "24px",
-                    overflow: "hidden",
-                    boxShadow: "0 20px 50px rgba(0,0,0,0.06)",
-                    background: "#000",
-                    lineHeight: 0
+                    position: "absolute",
+                    left: 14,
+                    right: 14,
+                    bottom: 16,
+                    padding: "12px 14px",
+                    borderRadius: 14,
+                    background: "linear-gradient(180deg, rgba(15,23,42,0.12), rgba(15,23,42,0.78))",
+                    color: "white",
+                    textShadow: "0 2px 10px rgba(0,0,0,0.35)",
+                    pointerEvents: "none",
+                    textAlign: "center",
                   }}>
-                    <video
-                      key={currentVdo}
-                      src={videos[currentVdo].src}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      style={{
-                        width: "100%",
-                        maxHeight: "55vh",
-                        objectFit: "cover",
-                        display: "block"
-                      }}
-                    />
+                    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.8, marginBottom: 4 }}>
+                      Subtitle
+                    </div>
+                    <div style={{ fontSize: 15, lineHeight: 1.55, fontWeight: 700, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                      {subtitleChunks[subtitleChunkIndex]}
+                    </div>
                   </div>
-                  <div style={{
-                    marginTop: 20,
-                    textAlign: "left",
-                    padding: "0 8px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8
-                  }}>
-                    <span style={{ fontSize: "13px", color: "#64748b", fontWeight: 500 }}>
-                      Prompt: {videos[currentVdo].prompt}
-                    </span>
-                    <div style={{ width: 14, height: 14, borderRadius: "50%", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, cursor: "pointer" }}>+</div>
-                  </div>
+                  <button
+                    onClick={() => setIsAudioPlaying((prev) => !prev)}
+                    style={{
+                      position: "absolute",
+                      left: 16,
+                      bottom: 16,
+                      width: 42,
+                      height: 42,
+                      borderRadius: "50%",
+                      border: "none",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: "rgba(15, 23, 42, 0.82)",
+                      color: "white",
+                      boxShadow: "0 12px 24px rgba(0,0,0,0.22)",
+                    }}
+                    aria-label={isAudioPlaying ? "Pause audio" : "Play audio"}
+                    title={isAudioPlaying ? "Pause audio" : "Play audio"}
+                  >
+                    {isAudioPlaying ? <Pause size={18} /> : <Play size={18} style={{ marginLeft: 2 }} />}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setVideoDirection("next");
+                      setCurrentVdo((prev) => (prev + 1) % videos.length);
+                      setIsAudioPlaying(true);
+                    }}
+                    style={{
+                      position: "absolute",
+                      right: 16,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      width: 50,
+                      height: 50,
+                      borderRadius: "50%",
+                      border: "none",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: "rgba(15, 23, 42, 0.88)",
+                      color: "white",
+                      boxShadow: "0 12px 24px rgba(0,0,0,0.22)",
+                    }}
+                    aria-label="Next video"
+                    title="Next video"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
                 </div>
-
-                <button
-                  onClick={() => setCurrentVdo((prev) => (prev + 1) % videos.length)}
-                  style={{
-                    width: 54,
-                    height: 54,
-                    borderRadius: "50%",
-                    background: "#ffffff",
-                    border: "1px solid rgba(0,0,0,0.05)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#64748b",
-                    cursor: "pointer",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                    transition: "all 0.2s",
-                    flexShrink: 0
-                  }}
-                  className="mode-toggle"
-                  title="Next Concept"
-                >
-                  <ChevronRight size={24} />
-                </button>
               </div>
             )}
 
