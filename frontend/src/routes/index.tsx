@@ -226,8 +226,6 @@ function Index() {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 450));
-      const reply = `Here is a short video concept for: "${userText}". I would turn this into a fast hook, a clear middle, and a strong ending for a 15 to 30 second clip.`;
-      setMessages(prev => [...prev, { role: "assistant", content: reply }]);
       // start a 12 second delay (configurable) before showing the video
       const delayMs = 12000; // 12 seconds (user suggested 10-15s)
       // clear any existing timers
@@ -249,12 +247,15 @@ function Index() {
       videoDelayTimeoutRef.current = window.setTimeout(() => {
         setVideoVisible(true);
         setIsAudioPlaying(true);
+        const reply = `Here is a short video concept for: "${userText}". I would turn this into a fast hook, a clear middle, and a strong ending for a 15 to 30 second clip.`;
+        setMessages(prev => [...prev, { role: "assistant", content: reply }]);
+        setLoading(false);
         if (videoDelayTimeoutRef.current) { window.clearTimeout(videoDelayTimeoutRef.current); videoDelayTimeoutRef.current = null; }
       }, delayMs) as unknown as number;
     } catch (e) {
       setMessages(prev => [...prev, { role: "assistant", content: "⚠️ Connection error. Please try again." }]);
-    } finally {
       setLoading(false);
+    } finally {
     }
   };
 
