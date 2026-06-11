@@ -4,7 +4,7 @@ import { Bell, Mic, Link as LinkIcon, Sparkles, Send, History, Video, Zap, Searc
 import logo from "@/assets/logo.jpeg";
 import pulsevdo from "@/assets/pulsevdo.mp4";
 import vdo2 from "@/assets/vdo2.mp4";
-import test1Audio from "@/assets/test1.mp3";
+import test2Audio from "@/assets/test2.mp3";
 import avatarPlaceholder from "@/assets/image.png";
 
 export const Route = createFileRoute("/")({
@@ -206,7 +206,7 @@ function Index() {
 
     const interval = window.setInterval(() => {
       setSubtitleChunkIndex((prev) => (prev + 1) % subtitleChunks.length);
-    }, 1200);
+    }, 1500);
 
     return () => window.clearInterval(interval);
   }, [hasPrompt, isAudioPlaying, currentVdo]);
@@ -249,7 +249,7 @@ function Index() {
       height: "100vh", background: "#f8fafc",
       display: "flex", fontFamily: "'Inter', sans-serif", color: "#334155", overflow: "hidden",
     }}>
-      <audio ref={audioRef} src={test1Audio} loop preload="auto" />
+      <audio ref={audioRef} src={test2Audio} loop preload="auto" />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
         @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
